@@ -32,6 +32,12 @@ Examples
   pulse-volume.py
   ```
 
+- Toggle the mute status of the default sink:
+
+  ```
+  pulse-volume.py --toggle
+  ```
+
 - Mute the default sink:
 
   ```

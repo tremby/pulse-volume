@@ -90,6 +90,7 @@ if __name__ == "__main__":
 	optionparser = optparse.OptionParser(usage="%prog [options] [<volume>[%][+|-]")
 	optionparser.add_option("-q", "--quiet", action="store_true", help="Don't print the new volume and mute status")
 	optionparser.add_option("-s", "--sink", type="int", default=-1, help="Set the sink number to control (default: %default, which means use Pulse default)")
+	optionparser.add_option("--toggle", action="store_true", help="Toggle mute status")
 	optionparser.add_option("--unmute", action="store_true", help="Unmute")
 	optionparser.add_option("--mute", action="store_true", help="Mute")
 	optionparser.add_option("--muted", action="store_true", help="Exit with success status (0) if muted, 1 if not muted, do nothing else")
@@ -108,7 +109,9 @@ if __name__ == "__main__":
 	if options.muted:
 		sys.exit(0 if volume.get_mute() else 1)
 
-	if options.mute:
+	if options.toggle:
+		volume.set_mute(not volume.get_mute())
+	elif options.mute:
 		volume.set_mute()
 	elif options.unmute:
 		volume.set_mute(False)
