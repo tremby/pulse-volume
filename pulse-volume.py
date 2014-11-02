@@ -106,9 +106,7 @@ if __name__ == "__main__":
 		options.sink = volume.get_default_sink()
 
 	if options.muted:
-		if volume.get_mute():
-			sys.exit(0)
-		sys.exit(1)
+		sys.exit(0 if volume.get_mute() else 1)
 
 	if options.mute:
 		volume.set_mute()
