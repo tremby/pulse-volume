@@ -1,7 +1,5 @@
 #!/usr/bin/env python
 
-DEFAULT_SINK = 0
-
 import optparse
 import re
 import subprocess
@@ -19,6 +17,14 @@ class Volume:
 		if self.state is None or self.modified:
 			self.state = subprocess.check_output(["pacmd", "list-sinks"])
 		return self.state
+
+	def get_default_sink(self):
+		"""Return the index of the default sink
+		"""
+		match = re.search(r"^\s*\*\s*index:\s*(\d+)$", self.get_state(), flags=re.MULTILINE)
+		if not match:
+			raise Exception("couldn't find default sink in pacmd's output: %s" % self.get_state())
+		return int(match.group(1))
 
 	def get_volume(self):
 		"""Return the volume (integer 0 to maximum volume, which might be 65000 or 
@@ -83,7 +89,7 @@ class Volume:
 if __name__ == "__main__":
 	optionparser = optparse.OptionParser(usage="%prog [options] [<volume>[%][+|-]")
 	optionparser.add_option("-q", "--quiet", action="store_true", help="Don't print the new volume and mute status")
-	optionparser.add_option("-s", "--sink", type="int", default=DEFAULT_SINK, help="Set the sink number to control (default: %default)")
+	optionparser.add_option("-s", "--sink", type="int", default=-1, help="Set the sink number to control (default: %default, which means use Pulse default)")
 	optionparser.add_option("--unmute", action="store_true", help="Unmute")
 	optionparser.add_option("--mute", action="store_true", help="Mute")
 	optionparser.add_option("--muted", action="store_true", help="Exit with success status (0) if muted, 1 if not muted, do nothing else")
@@ -95,6 +101,9 @@ if __name__ == "__main__":
 		optionparser.error("--unmute and --mute connot be used at the same time")
 
 	volume = Volume(options)
+
+	if options.sink == -1:
+		options.sink = volume.get_default_sink()
 
 	if options.muted:
 		if volume.get_mute():
