@@ -14,10 +14,10 @@ class Volume:
 		self.modified = False
 
 	def get_state(self):
-		"""Return a string output from pacmd list-sinks <sinknum>
+		"""Return a string output from pacmd list-sinks
 		"""
 		if self.state is None or self.modified:
-			self.state = subprocess.check_output(["pacmd", "list-sinks", str(self.options.sink)])
+			self.state = subprocess.check_output(["pacmd", "list-sinks"])
 		return self.state
 
 	def get_volume(self):
