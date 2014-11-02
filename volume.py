@@ -24,10 +24,16 @@ class Volume:
 		"""Return the volume (integer 0 to maximum volume, which might be 65000 or 
 		whatever)
 		"""
-		match = re.search(r"^\s*volume:\s+0:\s+(\d+)%", self.get_state(), flags=re.MULTILINE)
-		if not match:
-			raise Exception("couldn't find volume in pacmd's output: %s" % self.get_state())
-		return int(round(self.get_max_volume() * float(match.group(1)) / 100))
+		correctSink = False
+		for line in self.get_state().split("\n"):
+			if not correctSink:
+				if re.search(r"^[\s*]*index: %d$" % self.options.sink, line):
+					correctSink = True
+				continue
+			match = re.search(r"^\s*volume:\s+0:\s+(\d+)%", line)
+			if match:
+				return int(round(self.get_max_volume() * float(match.group(1)) / 100))
+		raise Exception("couldn't find volume in pacmd's output: %s" % self.get_state())
 
 	def get_mute(self):
 		"""Return true if the sink is muted
