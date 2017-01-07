@@ -36,9 +36,9 @@ class Volume:
 				if re.search(r"^[\s*]*index: %d$" % self.options.sink, line):
 					correctSink = True
 				continue
-			match = re.search(r"^\s*volume:\s+0:\s+(\d+)%", line)
+			match = re.search(r"^\s*volume:\s+front-left:\s+(\d+)", line)
 			if match:
-				return int(round(self.get_max_volume() * float(match.group(1)) / 100))
+				return int(match.group(1))
 		raise Exception("couldn't find volume in pacmd's output: %s" % self.get_state())
 
 	def get_mute(self):
@@ -87,7 +87,7 @@ class Volume:
 		return "no"
 
 if __name__ == "__main__":
-	optionparser = optparse.OptionParser(usage="%prog [options] [<volume>[%][+|-]")
+	optionparser = optparse.OptionParser(usage="%prog [options] [<volume>[%][+|-]]")
 	optionparser.add_option("-q", "--quiet", action="store_true", help="Don't print the new volume and mute status")
 	optionparser.add_option("-s", "--sink", type="int", default=-1, help="Set the sink number to control (default: %default, which means use Pulse default)")
 	optionparser.add_option("--toggle", action="store_true", help="Toggle mute status")
