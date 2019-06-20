@@ -94,6 +94,7 @@ if __name__ == "__main__":
 	optionparser.add_option("--unmute", action="store_true", help="Unmute")
 	optionparser.add_option("--mute", action="store_true", help="Mute")
 	optionparser.add_option("--muted", action="store_true", help="Exit with success status (0) if muted, 1 if not muted, do nothing else")
+	optionparser.add_option("--notify", action="store_true", help="Use notify-send.sh (expected to be in $PATH) to pop up a notification")
 	(options, args) = optionparser.parse_args()
 
 	if len(args) > 1:
@@ -139,3 +140,26 @@ if __name__ == "__main__":
 
 	if not options.quiet:
 		print "%s (muted: %s)" % (volume.vol_string(), volume.mute_string())
+
+	if options.notify:
+		muted = volume.get_mute()
+		vol = volume.get_volume()
+		maxvol = volume.get_max_volume()
+		percentage = int(round(100 * float(vol) / maxvol))
+		if muted:
+			icon = "audio-volume-muted"
+		elif percentage >= 75:
+			icon = "audio-volume-high"
+		elif percentage >= 25:
+			icon = "audio-volume-medium"
+		else:
+			icon = "audio-volume-low"
+
+		subprocess.call([
+			"notify-send.sh",
+			"Volume: %s%%%s" % (percentage, " (muted)" if muted else ""),
+			"--expire-time=1500",
+			"--icon=%s" % icon,
+			"--hint=int:value:%d" % percentage,
+			"--replace-file=/tmp/volume-notification-id",
+			])

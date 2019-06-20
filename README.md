@@ -23,6 +23,13 @@ Usage
 
 See `pulse-volume.py --help` for full information.
 
+Notifications
+-------------
+
+If the `--notify` option is given, `pulse-volume` expects to find
+[`notify-send.sh`](https://github.com/vlevit/notify-send.sh)
+in the `$PATH`, and uses it to raise a desktop notification with the current volume status.
+
 Examples
 --------
 
@@ -32,10 +39,10 @@ Examples
   pulse-volume.py
   ```
 
-- Toggle the mute status of the default sink:
+- Toggle the mute status of the default sink and show a notification:
 
   ```
-  pulse-volume.py --toggle
+  pulse-volume.py --toggle --notify
   ```
 
 - Mute the default sink:
@@ -57,16 +64,16 @@ Examples
   pulse-volume.py --muted && do-something-useful || do-something-else
   ```
 
-- Raise the volume of the sink with index 2 by 5%:
+- Raise the volume of the sink with index 2 by 5% and show a notification:
 
   ```
-  pulse-volume.py --sink=2 5%+
+  pulse-volume.py --sink=2 5%+ --notify
   ```
 
-- Lower the volume of the default sink by 15 units:
+- Lower the volume of the default sink by 15 units and show a notification:
 
   ```
-  pulse-volume.py 15-
+  pulse-volume.py 15- --notify
   ```
 
 - Set the volume of the default sink to 25% and unmute it:
